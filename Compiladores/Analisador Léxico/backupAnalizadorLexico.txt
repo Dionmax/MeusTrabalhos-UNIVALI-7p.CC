@@ -1,0 +1,72 @@
+IF: (if|IF)
+ELSE: (else|ELSE)
+THEN: (THEN|then)
+NEW: "new"
+WFOR: (while|WHILE)
+CFOR: (for|FOR)
+DFOR: (do|DO)
+KEY_INT: (int|INT)
+KEY_FLOAT: (float|FLOAT)
+KEY_STR: (string|STRING)
+KEY_BIN: (binary|BINARY)
+KEY_CHAR: (char|CHAR)
+KEY_HEX: (hex|HEX)
+BOOL: (bool|BOOL)
+KEY_CLASS: (class| CLASS)
+AND: (and|AND|&&)
+OR: (or|OR| \|\|)
+TRUE: ("true"|"TRUE")
+FALSE: ("false"|"FALSE")
+//ML_COMMT: /\*([^\*]|[\r\n]|(\*+([^\*/]|[\r\n])))*\*+/
+ML_COMMT2: (/\*([^\*]|[\r\n]|(\*+([^\*/]|[\r\n])))*\*+/)|("/\/".*)
+NOT: "!"
+EQ: "=="
+NEQ: "!="
+ASG: "="
+DCL: ":"
+END: ";"
+SPD: "("
+EPD: ")"
+SBD: "{"
+EBD: "}"
+SCD: "["
+ECD: "]"
+SUB: "+"
+SUM: "-"
+MULT: "*"
+DIV: "/"
+STR: {STR}
+CHAR: '({S}|{D})' //Talvez
+INT: {D}+
+FLOAT: {F}
+BIN: [0-1]+b
+HEX: (0x|0X)([a-f A-F]?|{D}?)[a-f A-F 0-9]*
+LT: "<"
+LQT: "<="
+GT: ">"
+GQT: ">="
+B_AND: "&"
+B_OR: "|"
+B_XOR: "^"
+B_LS: "<<"
+B_RS: ">>"
+B_NOT: "~"
+MOD: "%"
+INCRM: "++"
+DCRM: "--"
+SPRD: ","
+DOT: "."
+COMMT: [/][/] (.* [^"/""/"])
+ID: {ID}
+
+
+
+
+
+:[\n\s\t]
+
+D: [0-9]
+S: [a-zA-Z]
+F: {D}+\.{D}+f
+ID: _? {S} (_|{S}|{D})*
+STR: \" \s* ( [^\"]  )* \s* \"
