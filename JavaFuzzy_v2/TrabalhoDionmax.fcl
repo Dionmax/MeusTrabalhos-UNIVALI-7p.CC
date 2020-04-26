@@ -1,0 +1,96 @@
+FUNCTION_BLOCK Ao_ataque
+
+	VAR_INPUT
+		Saude_Personagem REAL;
+		Saude_Adversario REAL;
+		Turno REAL;
+	END_VAR
+
+	VAR_OUTPUT
+		Chance_vitoria REAL;
+	END_VAR
+
+	FUZZIFY Saude_Personagem
+		TERM Muito_baixa	:= (0, 0) (0, 1) (25, 0);
+		TERM Baixo 			:= (0, 0) (25, 1) (50, 0);
+		TERM Metade 		:= (25, 0) (50, 1) (75, 0);
+		TERM Alta 			:= (50, 0) (75, 1) (100, 0);
+		TERM Cheia 			:= (75, 0) (100, 1) (100, 0);
+	END_FUZZIFY
+
+	FUZZIFY Saude_Adversario
+		TERM Muito_baixa	:= (0, 0) (0, 1) (25, 0);
+		TERM Baixo 			:= (0, 0) (25, 1) (50, 0);
+		TERM Metade 		:= (25, 0) (50, 1) (75, 0);
+		TERM Alta 			:= (50, 0) (75, 1) (100, 0);
+		TERM Cheia 			:= (75, 0) (100, 1) (100, 0);
+	END_FUZZIFY
+
+	FUZZIFY Turno
+		TERM Adversario := trape 0 2 3 5;
+		TERM Personagem := trape 5 7 8 10;
+	END_FUZZIFY
+
+	DEFUZZIFY Chance_vitoria
+		TERM Nenhuma	:= (0, 0) (0, 1) (25, 0);
+		TERM Baixa 		:= (0, 0) (25, 1) (50, 0);
+		TERM Incerta 	:= (25, 0) (50, 1) (75, 0);
+		TERM Provavel 	:= (50, 0) (75, 1) (100, 0);
+		TERM Certeza 	:= (75, 0) (100, 1) (100, 0);
+	END_DEFUZZIFY 
+
+	RULEBLOCK first
+		AND:MIN;
+		ACCU:MAX;
+
+		RULE 0:  IF (Turno is Personagem) AND (Saude_Personagem IS Muito_baixa) AND (Saude_Adversario IS Muito_baixa) THEN (Chance_vitoria IS Provavel);
+		RULE 1:  IF (Turno is Personagem) AND (Saude_Personagem IS Muito_baixa) AND (Saude_Adversario IS Baixo) THEN (Chance_vitoria IS Baixa);
+		RULE 2:  IF (Turno is Personagem) AND (Saude_Personagem IS Muito_baixa) AND ((Saude_Adversario IS Metade) OR (Saude_Adversario IS Alta) OR (Saude_Adversario IS Cheia)) THEN (Chance_vitoria IS Nenhuma);
+		
+		RULE 3:  IF (Turno is Adversario) AND (Saude_Personagem IS Muito_baixa) AND (Saude_Adversario IS Muito_baixa) THEN (Chance_vitoria IS Nenhuma);
+		RULE 4:  IF (Turno is Adversario) AND (Saude_Personagem IS Muito_baixa) AND (Saude_Adversario IS Baixo) THEN (Chance_vitoria IS Nenhuma);
+		RULE 5:  IF (Turno is Adversario) AND (Saude_Personagem IS Muito_baixa) AND ((Saude_Adversario IS Metade) OR (Saude_Adversario IS Alta) OR (Saude_Adversario IS Cheia)) THEN (Chance_vitoria IS Nenhuma);
+		
+		RULE 6:  IF (Turno is Personagem) AND (Saude_Personagem IS Baixo) AND (Saude_Adversario IS Muito_baixa) THEN (Chance_vitoria IS Certeza);
+		RULE 7:  IF (Turno is Personagem) AND (Saude_Personagem IS Baixo) AND (Saude_Adversario IS Baixo) THEN (Chance_vitoria IS Provavel);
+		RULE 8:  IF (Turno is Personagem) AND (Saude_Personagem IS Baixo) AND (Saude_Adversario IS Metade) THEN (Chance_vitoria IS Baixa);
+		RULE 9:  IF (Turno is Personagem) AND (Saude_Personagem IS Baixo) AND ((Saude_Adversario IS Alta) OR (Saude_Adversario IS Cheia)) THEN (Chance_vitoria IS Nenhuma);		
+		
+		RULE 10:  IF (Turno is Adversario) AND (Saude_Personagem IS Baixo) AND (Saude_Adversario IS Muito_baixa) THEN (Chance_vitoria IS Incerta);
+		RULE 11:  IF (Turno is Adversario) AND (Saude_Personagem IS Baixo) AND (Saude_Adversario IS Baixo) THEN (Chance_vitoria IS Baixa);
+		RULE 12:  IF (Turno is Adversario) AND (Saude_Personagem IS Baixo) AND (Saude_Adversario IS Metade) THEN (Chance_vitoria IS Nenhuma);
+		RULE 13:  IF (Turno is Adversario) AND (Saude_Personagem IS Baixo) AND ((Saude_Adversario IS Alta) OR (Saude_Adversario IS Cheia)) THEN (Chance_vitoria IS Nenhuma);		
+
+		RULE 14: IF (Turno is Personagem) AND (Saude_Personagem IS Metade) AND (Saude_Adversario IS Muito_baixa) THEN (Chance_vitoria IS Certeza);
+		RULE 15: IF (Turno is Personagem) AND (Saude_Personagem IS Metade) AND (Saude_Adversario IS Baixo) THEN (Chance_vitoria IS Provavel);
+		RULE 16: IF (Turno is Personagem) AND (Saude_Personagem IS Metade) AND (Saude_Adversario IS Metade) THEN (Chance_vitoria IS Incerta);
+		RULE 17: IF (Turno is Personagem) AND (Saude_Personagem IS Metade) AND (Saude_Adversario IS Alta) THEN (Chance_vitoria IS Incerta);
+		RULE 18: IF (Turno is Personagem) AND (Saude_Personagem IS Metade) AND (Saude_Adversario IS Cheia) THEN (Chance_vitoria IS Baixa);
+
+		RULE 19: IF (Turno is Adversario) AND (Saude_Personagem IS Metade) AND (Saude_Adversario IS Muito_baixa) THEN (Chance_vitoria IS Provavel);
+		RULE 20: IF (Turno is Adversario) AND (Saude_Personagem IS Metade) AND (Saude_Adversario IS Baixo) THEN (Chance_vitoria IS Incerta);
+		RULE 21: IF (Turno is Adversario) AND (Saude_Personagem IS Metade) AND (Saude_Adversario IS Metade) THEN (Chance_vitoria IS Incerta);
+		RULE 22: IF (Turno is Adversario) AND (Saude_Personagem IS Metade) AND (Saude_Adversario IS Alta) THEN (Chance_vitoria IS Baixa);
+		RULE 23: IF (Turno is Adversario) AND (Saude_Personagem IS Metade) AND (Saude_Adversario IS Cheia) THEN (Chance_vitoria IS Nenhuma);	
+		
+		RULE 24: IF (Turno is Personagem) AND (Saude_Personagem IS Alta) AND ((Saude_Adversario IS Muito_baixa) OR (Saude_Adversario IS Baixo)) THEN (Chance_vitoria IS Certeza);
+		RULE 25: IF (Turno is Personagem) AND (Saude_Personagem IS Alta) AND (Saude_Adversario IS Metade) THEN (Chance_vitoria IS Provavel);
+		RULE 26: IF (Turno is Personagem) AND (Saude_Personagem IS Alta) AND (Saude_Adversario IS Alta) THEN (Chance_vitoria IS Incerta);
+		RULE 27: IF (Turno is Personagem) AND (Saude_Personagem IS Alta) AND (Saude_Adversario IS Cheia) THEN (Chance_vitoria IS Incerta);
+
+		RULE 28: IF (Turno is Adversario) AND (Saude_Personagem IS Alta) AND ((Saude_Adversario IS Muito_baixa) OR (Saude_Adversario IS Baixo)) THEN (Chance_vitoria IS Provavel);
+		RULE 29: IF (Turno is Adversario) AND (Saude_Personagem IS Alta) AND (Saude_Adversario IS Metade) THEN (Chance_vitoria IS Incerta);
+		RULE 30: IF (Turno is Adversario) AND (Saude_Personagem IS Alta) AND (Saude_Adversario IS Alta) THEN (Chance_vitoria IS Incerta);
+		RULE 31: IF (Turno is Adversario) AND (Saude_Personagem IS Alta) AND (Saude_Adversario IS Cheia) THEN (Chance_vitoria IS Baixa);	
+		
+		RULE 32: IF (Turno is Personagem) AND (Saude_Personagem IS Cheia) AND ((Saude_Adversario IS Muito_baixa) OR (Saude_Adversario IS Baixo) OR (Saude_Adversario IS Metade)) THEN (Chance_vitoria IS Provavel);
+		RULE 33: IF (Turno is Personagem) AND (Saude_Personagem IS Cheia) AND (Saude_Adversario IS Alta) THEN (Chance_vitoria IS Provavel);
+		RULE 34: IF (Turno is Personagem) AND (Saude_Personagem IS Cheia) AND (Saude_Adversario IS Cheia) THEN (Chance_vitoria IS Incerta);
+
+		RULE 35: IF (Turno is Adversario) AND (Saude_Personagem IS Cheia) AND ((Saude_Adversario IS Muito_baixa) OR (Saude_Adversario IS Baixo) OR (Saude_Adversario IS Metade)) THEN (Chance_vitoria IS Certeza);
+		RULE 36: IF (Turno is Adversario) AND (Saude_Personagem IS Cheia) AND (Saude_Adversario IS Alta) THEN (Chance_vitoria IS Incerta);
+		RULE 37: IF (Turno is Adversario) AND (Saude_Personagem IS Cheia) AND (Saude_Adversario IS Cheia) THEN (Chance_vitoria IS Incerta);
+
+	END_RULEBLOCK
+	
+END_FUNCTION_BLOCK
