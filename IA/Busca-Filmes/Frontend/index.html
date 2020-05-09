@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Busca Filmes</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.4.3/dist/css/uikit.min.css" />
+    <link rel="stylesheet" href="style.css" />
+
+</head>
+
+<body>
+    <div class="uk-tile uk-tile-secondary">
+        <h1 class="uk-text-center title">Busca Filmes</h1>
+    </div>
+    <div class="uk-container uk-margin-large-bottom">
+        <form>
+            <div class="uk-child-width-1-4 uk-margin-medium-top uk-flex uk-flex-center" uk-grid>
+
+                <div>
+                    <label class="uk-form-label" for="form-genero">Gênero</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-genero" data-url="http://localhost:3001/generos"></select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="uk-form-label" for="form-duracao">Duração</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-duracao" data-url="http://localhost:3001/duracoes"></select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="uk-form-label" for="form-ator">Ator</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-ator" data-url="http://localhost:3001/atores"></select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="uk-form-label" for="form-tipo">Tipo</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-tipo" data-url="http://localhost:3001/tipos"></select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="uk-form-label" for="form-produtora">Produtora</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-produtora"
+                            data-url="http://localhost:3001/produtoras"></select>
+                    </div>
+                </div>
+
+                <!-- <div>
+                    <label class="uk-form-label" for="form-ano">Ano</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-ano" data-url="http://localhost:3001/anos"></select>
+                    </div>
+                </div> -->
+
+                <div>
+                    <label class="uk-form-label" for="form-faixa-idade">Faixa Idade</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-faixa-idade" data-url="">
+                            <option value="Indiferente">Indiferente</option>
+                            <option value="L">L</option>
+                            <option value="10">10</option>
+                            <option value="14">14</option>
+                            <option value="16">16</option>
+                            <option value="18">18</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-text-center uk-margin-medium-top">
+                <button type="submit" class="uk-button uk-button-primary">Buscar</button>
+            </div>
+        </form>
+
+        <div id="tablediv">
+            <table id="simtable">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Gênero</th>
+                        <th>Duração</th>
+                        <th>Ator</th>
+                        <th>Tipo</th>
+                        <th>Produtora</th>
+                        <th>Faixa idade</th>
+                        <th>Similaridade</th>
+                    </tr>
+                </thead>
+                <tbody id="simtablebody">
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.4.3/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.4.3/dist/js/uikit-icons.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
