@@ -1,0 +1,426 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package IDE;
+
+import UsageHistory.History;
+import gals.*;
+
+import java.awt.Desktop;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.OutputStreamWriter;
+import javax.swing.JFileChooser;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ * *
+ * @author dionmax
+ */
+public class IdeCompilador extends javax.swing.JFrame {
+
+    static String codigoFile = "";
+    static String codigoNameFile = "";
+
+    static Lexico lex;
+    static Semantico sem = new Semantico();
+    static Sintatico sin = new Sintatico();
+
+    public static Stack<Integer> expTypeStack = new Stack<>();
+    public static Stack<Integer> Escopo = new Stack<Integer>(); //Pilha de escpo
+    public static int contador = 0; //Contador de escopo
+
+    public static Stack<String> TipoVariavel = new Stack<String>(); //Pilha com o tipo da variavel usada na expressão
+
+    public static Map<String, String> VariavelId = new HashMap<String, String>(); //Key da variavel |ID na variavel
+    public static Map<String, Integer> VariavelEscopo = new HashMap<String, Integer>(); //Key da variavel |Escopo
+    public static Map<String, Boolean> VariavelInicializada = new HashMap<String, Boolean>(); //Key da variavel | Inicializada
+    public static Map<String, Boolean> VariavelUsada = new HashMap<String, Boolean>(); //Key da variavel | Usada
+    public static Map<String, String> VariavelTipo = new HashMap<String, String>(); //Key da variavel | Tipo
+    public static Map<String, String> VariavelTipoAdicional = new HashMap<>();
+
+    //Geração de código
+    public static String SaidaASM = "";
+    public static boolean CodigoGeradoF = true;
+
+    public IdeCompilador() {
+        initComponents();
+
+        //textEntrada.setText("int teste(int a){\n\n} \n\n\nint main(){\n\nint a, b[2];\n\nb[2] = 2; \n\n}");
+        //textEntrada.setText("int main(){\n\nif(2 > 3){\n\n} \n\n}");
+        //textEntrada.setText("int main(){\n\nbool b;\n\nif(b){\n\n} \n\n}");
+//        textEntrada.setText("int main(){\n\nstring a = \"ss2\";\n\n}");
+        textEntrada.setText(
+                "int main(){\n"
+                + "\n"
+                + "int a = 2;\n"
+                + "\n"
+                + "\n"
+                + "}");
+
+        //teste();
+    }
+
+    public void teste() {
+
+//        Escopo.push(0);
+//        Escopo.push(2);
+//        Escopo.push(1);
+//
+//        VariavelId.put("a$1", "b");
+//        VariavelId.put("b$2", "a");
+//
+//        History.setVariaveisInicializadas("a$1");
+//        History.setVariaveisTipo("a$1", "int");
+//        History.setVariaveisUsadas("a$1");
+//         System.out.println(History.getVariaveisInicializadas("a", 0));
+//        Set<String> key = VariavelId.keySet();
+//        key.forEach((chave) -> {
+//            System.out.println(chave + " - " + VariavelId.get(chave));
+//        });
+//        popularTabela();
+    }
+
+    private void popularTabela() {
+        Set<String> VarId = VariavelId.keySet();
+        VarId.forEach((chave) -> {
+            AddRowToJtable(new Object[]{
+                History.getVariaveisTipo(chave) + ((VariavelTipoAdicional.get(chave) != null) ? VariavelTipoAdicional.get(chave) : ""),
+                History.getVariaveisId(chave),
+                History.getVariaveisEscopo(chave),
+                History.getVariaveisInicializadas(chave),
+                History.getVariaveisUsadas(chave)
+            });
+
+            if (VariavelUsada.get(chave) == null) {
+                Semantico.saida += "WARNING - Variavel: '" + VariavelId.get(chave) + "' não utilizada\n";
+            }
+        });
+    }
+
+    public static void AddRowToJtable(Object[] rowData) {
+        DefaultTableModel model = (DefaultTableModel) tableTipo.getModel();
+        model.addRow(rowData);
+    }
+
+    private void reiniciarVariaveis() {
+        Escopo = new Stack<>();
+        TipoVariavel = new Stack<>();
+        contador = 0;
+
+        VariavelId = new HashMap<>();
+        VariavelEscopo = new HashMap<>();
+        VariavelInicializada = new HashMap<>();
+        VariavelTipo = new HashMap<>();
+        VariavelTipoAdicional = new HashMap<>();
+        VariavelUsada = new HashMap<>();
+        expTypeStack = new Stack<>();
+
+        SaidaASM = "";
+
+        ((DefaultTableModel) tableTipo.getModel()).setRowCount(0);
+    }
+
+    private static void clear() {
+        System.out.println("\n\n\n\n\n\n");
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jScrollPane1 = new javax.swing.JScrollPane();
+        textEntrada = new javax.swing.JTextArea();
+        btnAbrir = new javax.swing.JButton();
+        btnSalvar = new javax.swing.JButton();
+        btnCompilar = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        textSaida = new javax.swing.JTextPane();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tableTipo = new javax.swing.JTable();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        SaidaAMSText = new javax.swing.JTextArea();
+        SaveBip = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        textEntrada.setColumns(20);
+        textEntrada.setRows(5);
+        jScrollPane1.setViewportView(textEntrada);
+
+        btnAbrir.setText("Abrir");
+        btnAbrir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAbrirActionPerformed(evt);
+            }
+        });
+
+        btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
+
+        btnCompilar.setText("Compilar");
+        btnCompilar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCompilarActionPerformed(evt);
+            }
+        });
+
+        jScrollPane2.setViewportView(textSaida);
+
+        tableTipo.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Tipo", "ID", "Escopo", "Inicializada", "Utilizada"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tableTipo.getTableHeader().setReorderingAllowed(false);
+        jScrollPane3.setViewportView(tableTipo);
+        if (tableTipo.getColumnModel().getColumnCount() > 0) {
+            tableTipo.getColumnModel().getColumn(0).setResizable(false);
+            tableTipo.getColumnModel().getColumn(1).setResizable(false);
+            tableTipo.getColumnModel().getColumn(2).setResizable(false);
+            tableTipo.getColumnModel().getColumn(3).setResizable(false);
+            tableTipo.getColumnModel().getColumn(4).setResizable(false);
+        }
+
+        SaidaAMSText.setColumns(20);
+        SaidaAMSText.setRows(5);
+        jScrollPane4.setViewportView(SaidaAMSText);
+
+        SaveBip.setText("Salvar .bip");
+        SaveBip.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SaveBipActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnAbrir, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnCompilar)
+                        .addGap(18, 18, 18)
+                        .addComponent(SaveBip)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane4)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAbrir)
+                    .addComponent(btnSalvar)
+                    .addComponent(btnCompilar)
+                    .addComponent(SaveBip))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirActionPerformed
+
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new File("/home/dionmax/Downloads/Faculdade/7P/Compiladores"));
+
+        int value = chooser.showOpenDialog(null);
+        File f = chooser.getSelectedFile();
+        String filename = f.getAbsolutePath();
+
+        try {
+            FileReader reader = new FileReader(filename);
+            BufferedReader br = new BufferedReader(reader);
+
+            textEntrada.read(br, null);
+
+            codigoFile = textEntrada.getText();
+
+            codigoNameFile = filename;
+
+            br.close();
+
+            textEntrada.requestFocus();
+        } catch (IOException e) {
+            textSaida.setText("Erro ao ler o arquivo");
+        }
+    }//GEN-LAST:event_btnAbrirActionPerformed
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File("/home/dionmax/Downloads/Faculdade/7P/Compiladores"));
+        int retval = fileChooser.showSaveDialog(btnSalvar);
+        if (retval == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            if (file == null) {
+                return;
+            }
+            if (!file.getName().toLowerCase().endsWith(".txt")) {
+                file = new File(file.getParentFile(), file.getName() + ".txt");
+            }
+            try {
+                textEntrada.write(new OutputStreamWriter(new FileOutputStream(file),
+                        "utf-8"));
+                Desktop.getDesktop().open(file);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
+
+        reiniciarVariaveis();
+        codigoFile = textEntrada.getText();
+        textSaida.setText("");
+
+        try {
+            clear();
+
+            System.out.println("Compilando");
+
+            lex = new Lexico(codigoFile);
+            sin.parse(lex, sem);
+
+            textSaida.setText("Compilando");
+            textSaida.setText(sem.getSaidaMessage());
+
+            
+            //Geração Código
+            GeracaoCodigo.Gerador.CriarVariaveis();
+            SaidaAMSText.setText(SaidaASM);
+            
+            
+        } catch (LexicalError | SemanticError | SyntaticError e) {
+            textSaida.setText(e.getMessage());
+            reiniciarVariaveis();
+        }
+
+        popularTabela();
+    }//GEN-LAST:event_btnCompilarActionPerformed
+
+    private void SaveBipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveBipActionPerformed
+      JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File("/home/dionmax/Downloads/Faculdade/7P/Compiladores"));
+        int retval = fileChooser.showSaveDialog(btnSalvar);
+        if (retval == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            if (file == null) {
+                return;
+            }
+            if (!file.getName().toLowerCase().endsWith(".txt")) {
+                file = new File(file.getParentFile(), file.getName() + ".txt");
+            }
+            try {
+                SaidaAMSText.write(new OutputStreamWriter(new FileOutputStream(file),
+                        "utf-8"));
+                Desktop.getDesktop().open(file);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_SaveBipActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(IdeCompilador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(IdeCompilador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(IdeCompilador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(IdeCompilador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new IdeCompilador().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea SaidaAMSText;
+    private javax.swing.JButton SaveBip;
+    private javax.swing.JButton btnAbrir;
+    private javax.swing.JButton btnCompilar;
+    private javax.swing.JButton btnSalvar;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private static javax.swing.JTable tableTipo;
+    private javax.swing.JTextArea textEntrada;
+    private javax.swing.JTextPane textSaida;
+    // End of variables declaration//GEN-END:variables
+}

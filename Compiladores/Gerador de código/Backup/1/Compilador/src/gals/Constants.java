@@ -1,0 +1,73 @@
+package gals;
+
+public interface Constants extends ScannerConstants, ParserConstants
+{
+    int EPSILON  = 0;
+    int DOLLAR   = 1;
+
+    int t_IF = 2;
+    int t_ELSE = 3;
+    int t_THEN = 4;
+    int t_NEW = 5;
+    int t_WHILE = 6;
+    int t_FOR = 7;
+    int t_DO = 8;
+    int t_KEY_INT = 9;
+    int t_KEY_VOID = 10;
+    int t_KEY_FLOAT = 11;
+    int t_KEY_STR = 12;
+    int t_KEY_BIN = 13;
+    int t_KEY_CHAR = 14;
+    int t_KEY_HEX = 15;
+    int t_BOOL = 16;
+    int t_KEY_CLASS = 17;
+    int t_PRINTF = 18;
+    int t_SCANF = 19;
+    int t_AND = 20;
+    int t_RETURN = 21;
+    int t_OR = 22;
+    int t_TRUE = 23;
+    int t_FALSE = 24;
+    int t_ML_COMMT2 = 25;
+    int t_NOT = 26;
+    int t_EQ = 27;
+    int t_NEQ = 28;
+    int t_ASG = 29;
+    int t_DCL = 30;
+    int t_END = 31;
+    int t_SPD = 32;
+    int t_EPD = 33;
+    int t_SBD = 34;
+    int t_EBD = 35;
+    int t_SCD = 36;
+    int t_ECD = 37;
+    int t_SUB = 38;
+    int t_SUM = 39;
+    int t_MULT = 40;
+    int t_DIV = 41;
+    int t_STR = 42;
+    int t_CHAR = 43;
+    int t_INT = 44;
+    int t_FLOAT = 45;
+    int t_BIN = 46;
+    int t_HEX = 47;
+    int t_LT = 48;
+    int t_LQT = 49;
+    int t_GT = 50;
+    int t_GQT = 51;
+    int t_B_AND = 52;
+    int t_B_OR = 53;
+    int t_B_XOR = 54;
+    int t_B_LS = 55;
+    int t_B_RS = 56;
+    int t_B_NOT = 57;
+    int t_MOD = 58;
+    int t_INCRM = 59;
+    int t_DCRM = 60;
+    int t_SPRD = 61;
+    int t_DOT = 62;
+    int t_MAIN = 63;
+    int t_ID = 64;
+    int t_BRK = 65;
+
+}

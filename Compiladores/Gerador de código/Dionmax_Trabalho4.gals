@@ -1,0 +1,241 @@
+#Options
+GenerateScanner = true
+GenerateParser = true
+Language = Java
+ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
+Package = gals
+ScannerCaseSensitive = true
+ScannerTable = Compact
+Input = String
+Parser = SLR
+#RegularDefinitions
+D: [0-9]
+S: [a-zA-Z]
+F: {D}+\.{D}+f
+ID: _? {S} (_|{S}|{D})*
+STR: \" \s* ( [^\"]  )* \s* \"
+
+#Tokens
+IF: (if|IF)
+ELSE: (else|ELSE)
+THEN: (THEN|then)
+NEW: "new"
+WHILE: (while|WHILE)
+FOR: (for|FOR)
+DO: (do|DO)
+KEY_INT: (int|INT)
+KEY_VOID: (void|VOID)
+KEY_FLOAT: (float|FLOAT)
+KEY_STR: (string|STRING)
+KEY_BIN: (binary|BINARY)
+KEY_CHAR: (char|CHAR)
+KEY_HEX: (hex|HEX)
+BOOL: (bool|BOOL)
+KEY_CLASS: (class| CLASS)
+PRINTF: (printf|PRINTF)
+SCANF: (scanf | SCANF)
+AND: (and|AND|&&)
+RETURN: (return|RETURN)
+OR: (or|OR| \|\|)
+TRUE: ("true"|"TRUE")
+FALSE: ("false"|"FALSE")
+ML_COMMT2: (/\*([^\*]|[\r\n]|(\*+([^\*/]|[\r\n])))*\*+/)|("/\/".*)
+NOT: "!"
+EQ: "=="
+NEQ: "!="
+ASG: "="
+DCL: ":"
+END: ";"
+SPD: "("
+EPD: ")"
+SBD: "{"
+EBD: "}"
+SCD: "["
+ECD: "]"
+SUB: "-"
+SUM: "+"
+MULT: "*"
+DIV: "/"
+STR: {STR}
+CHAR: '({S}|{D})'
+INT: {D}+
+FLOAT: {F}
+BIN: [0-1]+b
+HEX: (0x|0X)([a-f A-F]?|{D}?)[a-f A-F 0-9]*
+LT: "<"
+LQT: "<="
+GT: ">"
+GQT: ">="
+B_AND: "&"
+B_OR: "|"
+B_XOR: "^"
+B_LS: "<<"
+B_RS: ">>"
+B_NOT: "~"
+MOD: "%"
+INCRM: "++"
+DCRM: "--"
+SPRD: ","
+DOT: "."
+MAIN : (main|MAIN)
+ID: {ID}
+BRK: ("break"|"BREAK")
+
+
+
+
+:[\n\s\t]
+#NonTerminals
+<programa>
+
+<sub_rotinas>
+<sub_rotina>
+<chamada_sub_rotina>
+
+<funcao_principal>
+<funcao>
+
+<procedimento>
+<escopo>
+
+<dec_parametros>
+<dec_parametro>
+
+<parametros>
+<declaracao_variaveis>
+<lista_variaveis>
+
+<atribuicoes>
+<atribuicao>
+<atr_direta>
+
+<lista_cmd>
+<cmd>
+
+<saidas>
+<saida>
+
+<print>
+<scanf>
+
+<return>
+
+<stm_if>
+<stm_frk>  
+
+<laco_while>
+<laco_do>
+<laco_for>
+
+<pos_op>
+
+<exp> 
+<exp1>
+<exp2>
+<exp3>
+<exp4>
+<exp5>
+<exp6>
+<exp7>
+<exp8>
+<exp9>
+<exp10>
+
+<variavel>
+<var_tp>
+
+<op_rel>
+<op_neg>
+<op_bitwise>
+<op_arit_baixa>
+<op_arit_alta>
+#Grammar
+<programa> ::= <funcao_principal> | <sub_rotinas> <funcao_principal>;
+
+<funcao_principal> ::= KEY_INT MAIN SPD EPD <escopo>;
+
+<sub_rotinas> ::= <sub_rotinas> <sub_rotina> | <sub_rotina> ;
+
+<sub_rotina> ::= <funcao> | <procedimento>;
+
+<funcao> ::= <var_tp> ID SPD <dec_parametros> EPD <escopo> | <var_tp> ID SPD EPD <escopo>;
+
+<procedimento> ::= KEY_VOID ID SPD <dec_parametros> EPD <escopo> | KEY_VOID ID SPD EPD <escopo>;
+
+<escopo> ::= SBD#6 <lista_cmd> EBD#7 | SBD#6 EBD#7;
+
+<dec_parametros> ::= <dec_parametro> | <dec_parametros> SPRD <dec_parametro>;
+
+<dec_parametro> ::= <var_tp>#1 <variavel> #18| <var_tp> #1 <atr_direta>;
+
+<parametros> ::= <exp> #70 | <parametros> SPRD <exp> #70;
+
+<declaracao_variaveis> ::= <var_tp>#1 <lista_variaveis> #2 END;
+
+<lista_variaveis> ::= <variavel> | <lista_variaveis> SPRD <variavel> | <lista_variaveis> SPRD <atr_direta> | <atr_direta>;
+
+<atribuicoes> ::= <atribuicao> |  <atribuicoes> <atribuicao>;
+
+<atribuicao> ::= <atr_direta> 
+                | <variavel> SUM ASG <exp>
+                | <variavel> SUB ASG <exp>
+                | <variavel> DIV ASG <exp>
+                | <variavel> MULT ASG <exp>
+                | <variavel> MOD ASG <exp>
+                |<pos_op>;
+
+<atr_direta> ::= <variavel>#10 ASG <exp> #11;
+
+<lista_cmd> ::= <lista_cmd> <cmd> | <cmd>;
+
+<cmd> ::=  <stm_if> |  <laco_while> | <laco_do> | <laco_for> | <atribuicao> END
+| <print> | <chamada_sub_rotina> END | <scanf> | <declaracao_variaveis> | BRK END | <return>;
+
+<saidas> ::= <exp> | <saidas> SPRD <exp>;
+
+<print> ::= PRINTF SPD <saidas> EPD END;
+
+<scanf> ::= SCANF SPD <variavel> EPD;
+
+<return> ::= RETURN <exp> END | RETURN END;
+
+<stm_if> ::= IF SPD <parametros> EPD #40 <stm_frk>;
+<stm_frk> ::= <escopo> #41| <escopo> #41 ELSE #42 <escopo> #43;
+
+<laco_while> ::= WHILE #86 SPD <exp> #87 EPD <escopo> #88 | WHILE #86 SPD <exp> #87 EPD END #88;
+
+<laco_do> ::= DO #80 <escopo> WHILE SPD <exp> #81 EPD END;
+
+<laco_for> ::= FOR SPD <declaracao_variaveis> #82 <exp> #83 END <atribuicoes> #84 EPD <escopo> #85;
+
+<laco_for> ::= FOR SPD <atribuicoes> #89 END <exp> #83 END <atribuicoes> #84 EPD <escopo> #85;
+
+<pos_op> ::= <variavel> INCRM | <variavel> DCRM;
+
+<exp>  ::= <exp> OR #20 <exp1> | <exp1>;
+<exp1> ::= <exp1> AND #21 <exp2> | <exp2>;
+<exp2> ::= <exp2> B_OR <exp3> | <exp3>;
+<exp3> ::= <exp3> B_XOR <exp4> | <exp4>;
+<exp4> ::= <exp4> B_AND <exp5> | <exp5>;
+<exp5> ::= <exp5> <op_rel> #22<exp6> | <exp6>;
+<exp6> ::= <exp6> <op_bitwise> <exp7> | <exp7>;
+<exp7> ::= <exp7> <op_arit_baixa> #23 <exp8> | <exp8>;
+<exp8> ::= <exp8> <op_arit_alta> #24 <exp9> | <exp9> ;
+<exp9> ::= <op_neg> <exp10> | <exp10>;
+<exp10> ::= <saida> | SPD <exp> EPD;
+
+<saida> ::=  INT #30 | FLOAT #31 | STR #32 | BIN | HEX | CHAR #33 | <variavel> #17 | TRUE #34 | FALSE #35 | <chamada_sub_rotina>;
+
+<variavel>::= ID#4 | ID#5  SCD#27 <exp> ECD#28;
+
+<chamada_sub_rotina> ::= ID SPD <parametros> EPD | ID SPD EPD;
+
+<var_tp> ::= KEY_FLOAT | KEY_INT | KEY_STR | KEY_BIN | KEY_CHAR | KEY_HEX | BOOL ;
+
+<op_rel> ::= GT | LT | GQT | LQT | EQ | NEQ; 
+<op_neg> ::= B_NOT | NOT; 
+<op_bitwise> ::= B_LS | B_RS;
+<op_arit_baixa> ::= SUM #12 | SUB #13;
+<op_arit_alta> ::= MULT #14| DIV #15| MOD #16;
